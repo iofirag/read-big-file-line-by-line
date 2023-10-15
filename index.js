@@ -3,25 +3,12 @@ var fs = require('fs')
 
 var lineNr = 0;
 
-var s = fs.createReadStream('test_big_100000_rows.csv')
+var s = fs.createReadStream('./test_big_100000_rows.csv')
     .pipe(es.split())
     .pipe(es.mapSync(line => {
-
-        // pause the readstream
-        s.pause();
-
-        lineNr++;
-        if (lineNr>1) {
-            const name = line.split(',')[2];
-            console.log(`${lineNr}) ${name}`);
-        }
-        // process line here and call s.resume() when rdy
-        // function below was for logging memory usage
-        // logMemoryUsage(lineNr);
-
-
-        // resume the readstream, possibly from a callback
-        s.resume();
+        s.pause();                              // pause the readstream
+        console.log(`${++lineNr}) ${line}`);    // process line
+        s.resume();                             // resume the readstream, possibly from a callback
     })
     .on('error', function(err){
         console.log('Error while reading file.', err);
